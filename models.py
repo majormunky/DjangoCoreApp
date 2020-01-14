@@ -1,26 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
-class Location(models.Model):
-    """
-    Represents a physical location where the user is located
-    """
-    name = models.CharField(max_length=256)
-    address = models.ForeignKey("StreetAddress", blank=True, null=True, on_delete=models.SET_NULL)
-
-    def __str__(self):
-        return self.name
-
-class StreetAddress(models.Model):
-    address_1 = models.CharField(max_length=128)
-    address_2 = models.CharField(max_length=128, blank=True)
-    city = models.CharField(max_length=128)
-    state = models.CharField(max_length=10)
-    country = models.CharField(max_length=64, blank=True)
-    zip_code = models.CharField(max_length=64, blank=True)
-
-    def __str__(self):
-        return f"{self.address_1}, {self.city}"
 
 class CoreUserManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, password=None):
@@ -30,14 +10,10 @@ class CoreUserManager(BaseUserManager):
         if not email:
             raise ValueError("User must have an email address")
 
-        user_prefs = UserPreferences()
-        user_prefs.save()
-
         user = self.model(
             email=self.normalize_email(email),
             first_name=first_name,
             last_name=last_name,
-            preferences=user_prefs
         )
 
         user.set_password(password)
@@ -54,18 +30,12 @@ class CoreUserManager(BaseUserManager):
         return user
 
 
-class UserPreferences(models.Model):
-    location = models.ForeignKey(Location, blank=True, null=True, on_delete=models.SET_NULL)
-    timezone = models.CharField(max_length=64, blank=True, null=True)
-
-
 class CoreUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name="email address", max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
-    preferences = models.OneToOneField(UserPreferences, on_delete=models.CASCADE)
 
     objects = CoreUserManager()
 
@@ -94,4 +64,3 @@ class CoreUser(AbstractBaseUser, PermissionsMixin):
     def is_staff(self):
         # Simplest possible answer: All admins are staff
         return self.is_admin
-

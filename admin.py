@@ -80,5 +80,4 @@ class UserAdmin(BaseUserAdmin):
 
 # Now register UserAdmin
 admin.site.register(models.CoreUser, UserAdmin)
-admin.site.register(models.Location)
-admin.site.register(models.StreetAddress)
+
