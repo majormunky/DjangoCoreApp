@@ -2,27 +2,12 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 
-class Location(models.Model):
-    name = models.CharField(max_length=64)
-
-
-class UserPreferences(models.Model):
-    location = models.ForeignKey(
-        Location, blank=True, null=True, on_delete=models.SET_NULL
-    )
-    timezone = models.CharField(max_length=64, blank=True, null=True)
-
-
 class CoreUserManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError("Email is required")
 
-        user_prefs = UserPreferences()
-        user_prefs.save()
-
         user = self.model(email=self.normalize_email(email), **extra_fields)
-        user.user_prefs = user_prefs
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -46,9 +31,6 @@ class CoreUserManager(BaseUserManager):
 class CoreUser(AbstractUser):
     username = None
     email = models.EmailField("email address", unique=True)
-    preferences = models.OneToOneField(
-        UserPreferences, on_delete=models.CASCADE, blank=True, null=True
-    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
