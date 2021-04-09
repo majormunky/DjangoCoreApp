@@ -4,6 +4,9 @@ A Django app with a custom user model setup.  This uses an email address instead
 ## Instructions
 
 1. Clone this repository into a folder named core within your Django folder.
+```
+	git clone https://github.com/majormunky/DjangoCoreApp.git core
+```
 2. Open your project settings.py file
 3. Add this setting to the bottom of the file
 ```
