@@ -16,3 +16,8 @@ A Django app with a custom user model setup.  This uses an email address instead
 	python manage.py migrate
 ```
 6. That should be it!
+
+## What does this do?
+Normally Django will set you up with a user model that uses a username.  I prefer to just use an email address instead, so this is an easy way for me to get that setup.
+
+This app will define a custom user model that uses an email address as the username.
